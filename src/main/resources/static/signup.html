@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup</title>
+
+      <!-- Bootstrap CSS -->
+      <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+
+    <style>
+         /* 自定义样式 
+		 */
+         .form-container {
+            margin-top: 50px;
+        }
+        .form-heading {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .form-switch {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .container {
+            max-width: 500px;
+        }
+
+        .navbar .nav-link {
+        color: white !important; /* 設定導航連結顏色為白色 */
+      }
+
+      .navbar .nav-link:hover {
+        color: lightgray !important; /* 設定懸停時顏色 */
+      }
+
+      .navbar .btn {
+        color: black; /* 設定按鈕文字顏色 */
+        background-color: white; /* 設定按鈕背景顏色為白色 */
+      }
+
+      .navbar .btn:hover {
+        background-color: lightgray; /* 懸停時的背景顏色 */
+      }
+
+      .navbar .navbar-brand{
+        color: white !important;
+      }
+
+
+    </style>
+
+
+
+</head>
+<body>  
+    
+     <!--導覽列-->
+     <nav class="navbar navbar-expand-lg navbar-light bg-dark">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="/home/index">Car Forum</a>
+          <div class="d-flex">
+            <a class="nav-link text-white" href="/home/login">Login</a>
+            <a class="nav-link text-white" href="/home/signup">Signup</a>
+
+          </div>
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">  
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <li class="nav-item dropdown">
+                    <a
+                      class="nav-link dropdown-toggle"
+                      href="#"
+                      id="navbarDropdown"
+                      role="button"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                    >
+                      購車討論區
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                      <li><a class="dropdown-item" href="#">Action</a></li>
+                      <li><a class="dropdown-item" href="#">Another action</a></li>
+                      <li><hr class="dropdown-divider" /></li>
+                      <li>
+                        <a class="dropdown-item" href="#">Something else here</a>
+                      </li>
+                    </ul>
+                  </li>
+                  <li class="nav-item dropdown">
+                    <a
+                      class="nav-link dropdown-toggle"
+                      href="#"
+                      id="navbarDropdown"
+                      role="button"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                    >
+                      維修討論區
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                      <li><a class="dropdown-item" href="#">Action</a></li>
+                      <li><a class="dropdown-item" href="#">Another action</a></li>
+                      <li><hr class="dropdown-divider" /></li>
+                      <li>
+                        <a class="dropdown-item" href="#">Something else here</a>
+                      </li>
+                    </ul>
+                  </li>
+              <li class="nav-item dropdown">
+                <a
+                  class="nav-link dropdown-toggle"
+                  href="#"
+                  id="navbarDropdown"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  車主心得分享區
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                  <li><a class="dropdown-item" href="#">Action</a></li>
+                  <li><a class="dropdown-item" href="#">Another action</a></li>
+                  <li><hr class="dropdown-divider" /></li>
+                  <li>
+                    <a class="dropdown-item" href="#">Something else here</a>
+                  </li>
+                </ul>
+              </li>
+              <li class="nav-item dropdown">
+                  <a
+                    class="nav-link dropdown-toggle"
+                    href="#"
+                    id="navbarDropdown"
+                    role="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    商城區
+                  </a>
+                  <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <li><a class="dropdown-item" href="#">Action</a></li>
+                    <li><a class="dropdown-item" href="#">Another action</a></li>
+                    <li><hr class="dropdown-divider" /></li>
+                    <li>
+                      <a class="dropdown-item" href="#">Something else here</a>
+                    </li>
+                  </ul>
+                </li>
+            </ul>
+            <form class="d-flex">
+              <input
+                class="form-control me-2"
+                type="search"
+                placeholder="Search"
+                aria-label="Search"
+              />
+              <button class="btn btn-outline-light" type="submit">Search</button>
+            </form>
+          </div>
+        </div>
+      </nav>
+
+
+    <!-- 註冊表单 -->
+		
+    <div class="container form-container" id="signup-form">
+			
+        <h2 class="form-heading">Sign Up</h2>
+        <form id="signupForm">
+            <div class="mb-3">
+                <label for="signupUsername" class="form-label">Username</label>
+                <input type="text" class="form-control" id="signupUsername" placeholder="Enter username">
+            </div>
+            <div class="mb-3">
+                <label for="signupEmail" class="form-label">Email address</label>
+                <input type="email" class="form-control" id="signupEmail" placeholder="Enter email">
+            </div>
+            <div class="mb-3">
+                <label for="signupPassword" class="form-label">Password</label>
+                <input type="password" class="form-control" id="signupPassword" placeholder="Password">
+            </div>
+            <button type="submit" onclick="signup()" class="btn btn-primary w-100">Sign Up</button>
+            <div class="form-switch">
+                <p>Already have an account? <a href="/home/login">Login</a></p>
+            </div>
+        </form>
+
+        <div id="message"></div>
+	
+
+         <!-- 第三方登入方式 -->
+			
+         <div class="text-center my-3">OR</div>
+         <div class="d-grid gap-2">
+             <button type="button" class="btn btn-outline-secondary">
+                 <img src="https://img.icons8.com/color/16/000000/google-logo.png" alt="Google"> Continue with Google
+             </button>
+             <button type="button" class="btn btn-outline-secondary">
+                 <img src="https://img.icons8.com/fluency/16/000000/microsoft.png" alt="Microsoft"> Continue with Microsoft Account
+             </button>
+             <button type="button" class="btn btn-outline-secondary">
+                 <img src="https://img.icons8.com/ios-filled/16/000000/mac-client.png" alt="Apple"> Continue with Apple
+             </button>
+         </div>
+       
+
+    </div>
+
+    <!-- 引入Bootstrap和JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+		function signup(){
+			const userName = document.getElementById('signupUsername').value;
+            const emailAddress = document.getElementById('signupEmail').value;
+            const passWord = document.getElementById('signupPassword').value;
+
+            if(userName && emailAddress && passWord){
+                const userData = {userName, emailAddress, passWord};
+
+                fetch('http://localhost:8888/user/signup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(userData),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('message').innerText = '註冊成功^____^';
+                    document.getElementById('signupForm').reset();
+                })
+                .catch((error) => {
+                    document.getElementById('message').innerText = '註冊失敗QQ';
+                    console.error('Error', error);
+                });
+
+            }else{
+                document.getElementById('message').innerText = '請填寫所有欄位!';
+            }
+
+
+		}
+		
+		
+		
+		
+    </script>
+</body>
+</html>
