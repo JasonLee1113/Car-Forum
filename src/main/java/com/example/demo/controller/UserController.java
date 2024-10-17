@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,6 +20,10 @@ import com.example.demo.dao.UserRepository;
 import com.example.demo.model.ApiResponse;
 import com.example.demo.model.User;
 import com.example.demo.service.CustomUserDetailsService;
+import com.example.demo.util.JwtUtil;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/user")
@@ -40,6 +43,11 @@ public class UserController {
 
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private JwtUtil jwtUtil;
+	
+
 
 	@PostMapping("/signup")
 	public ResponseEntity<?> registerUser(@RequestBody User user) throws Exception {
@@ -59,19 +67,19 @@ public class UserController {
 			user.setPassword(encodePassword);
 			userRepository.save(user);
 
-			ApiResponse response = new ApiResponse(true, "註冊成功!");
+			ApiResponse response = new ApiResponse(true, "註冊成功!", null);
 			return ResponseEntity.ok(response);
 
 		} catch (Exception e) {
 			log.error("例外訊息:" + e.toString());
-			ApiResponse response = new ApiResponse(true, "註冊失敗!" + e.toString());
+			ApiResponse response = new ApiResponse(true, "註冊失敗!" + e.toString(), null);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
 		}
 
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<?> authenticateUser(@RequestBody User user) {
+	public ResponseEntity<?> authenticateUser(@RequestBody User user, HttpServletRequest request) {
 
 		try {
 			log.info("login account:" + user.getUsername());
@@ -81,31 +89,39 @@ public class UserController {
 					.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 			
-			ApiResponse response = new ApiResponse(true, "登入成功");
+			String jwt = jwtUtil.generateTwtToken(authentication);
+			log.info("jwt:" + jwt);
+			
+			ApiResponse response = new ApiResponse(true, "登入成功", jwt);
 			return ResponseEntity.ok(response);
 
 		} catch (Exception e) {
 			log.error("例外訊息:" + e.toString());
-			ApiResponse response = new ApiResponse(true, "登入失敗!" + e.toString());
+			ApiResponse response = new ApiResponse(true, "登入失敗!" + e.toString(), null);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
 		}
 	}
+	
+	
+	@PostMapping("/logout")
+	public ResponseEntity<?> logoutUser(HttpServletRequest request){
+		try {
+		
+			
+			SecurityContextHolder.clearContext();
+			ApiResponse response = new ApiResponse(true, "登出成功", null);
+			return ResponseEntity.ok(response);
+			
+		}catch(Exception e) {
+			log.error("例外訊息:" + e.toString());
+			ApiResponse response = new ApiResponse(true, "登入失敗!" + e.toString(), null);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+		}
+	}
+	
+	
 
-//	@PostMapping("/signup")
-//	public User signup(@RequestBody User user) {
 
-//		System.out.println("userName:" + user.getUserName());
-//		System.out.println("emailAddress:" + user.getEmailAddress());
-//		System.out.println("passWord:" + user.getPassWord());
 
-//		return userRepository.save(user);
-//	}
-
-//	@PostMapping("/login")
-//	public User login(@RequestBody User user){
-//		userService.login(user);
-//		
-//		
-//	}
 
 }
