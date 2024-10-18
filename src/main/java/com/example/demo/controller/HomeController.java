@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -8,25 +10,33 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/home")
 public class HomeController {
 	
+	private final Logger log = LoggerFactory.getLogger(this.getClass());
+
+	
 	// 首頁
 	@GetMapping("/index")
 	public String index() {
-		System.out.println("test123");
-		return "index";
+		log.info("return index page");
+		return "view/index";
 	}
 	
 	
 	@GetMapping("/signup")
 	public String signup() {
-		System.out.println("redirect:signuptest");
-		
-		return "redirect:/signup.html";
+		log.info("return signup page");
+		return "view/signup";
 	}
 	
 	@GetMapping("/login")
 	public String login() {
-		System.out.println("redirect:login");
-		return "redirect:/login.html";
+		log.info("return login page");
+		return "view/login";
+	}
+	
+	@GetMapping("/allArticle")
+	public String article() {
+		log.info("return allArticle page");
+		return "view/allArticle";
 	}
 
 	

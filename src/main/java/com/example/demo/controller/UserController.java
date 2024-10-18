@@ -106,7 +106,7 @@ public class UserController {
 	@PostMapping("/logout")
 	public ResponseEntity<?> logoutUser(HttpServletRequest request){
 		try {
-		
+			log.info("logout");
 			
 			SecurityContextHolder.clearContext();
 			ApiResponse response = new ApiResponse(true, "登出成功", null);

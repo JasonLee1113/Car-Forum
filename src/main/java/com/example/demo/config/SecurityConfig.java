@@ -74,10 +74,10 @@ public class SecurityConfig {
 				.exceptionHandling((exceptionHandling) -> exceptionHandling.authenticationEntryPoint(unauthorizedHandler))
 				.sessionManagement((sessionManagement) -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(authz -> authz
-						.requestMatchers("/home/**", "/login.html", "/signup.html").permitAll()
+						.requestMatchers("/home/**", "/login.html", "/signup.html", "/navbar.html").permitAll()
 						.requestMatchers("/user/**").permitAll()
 						
-						.requestMatchers("/images/**").permitAll()
+						.requestMatchers("/images/**", "/css/**").permitAll()
 						.anyRequest().authenticated()
 						)
 				.addFilterBefore(jwtAuthTokenFilter, UsernamePasswordAuthenticationFilter.class)

@@ -1,0 +1,36 @@
+
+      .carousel-item img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        margin: auto;
+      }
+
+      .container {
+        margin: auto;
+      }
+
+      .carousel {
+        height: 200px;
+      }
+
+      .navbar .nav-link {
+        color: white !important; /* 設定導航連結顏色為白色 */
+      }
+
+      .navbar .nav-link:hover {
+        color: lightgray !important; /* 設定懸停時顏色 */
+      }
+
+      .navbar .btn {
+        color: black; /* 設定按鈕文字顏色 */
+        background-color: white; /* 設定按鈕背景顏色為白色 */
+      }
+
+      .navbar .btn:hover {
+        background-color: lightgray; /* 懸停時的背景顏色 */
+      }
+
+      .navbar .navbar-brand {
+        color: white !important;
+      }
