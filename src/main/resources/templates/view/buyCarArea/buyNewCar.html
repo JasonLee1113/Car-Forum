@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="navbar"></div>
+
+    <div class="container-fluid">
+      <div class="row">
+        <!-- 左侧分类侧边栏 -->
+        <div class="col-md-2 sidebar">
+          <h4>分類</h4>
+          <ul class="nav flex-column">
+            <li class="nav-item">
+              <a class="nav-link text-black" href="#">即時熱門看板</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-black" href="#">感情</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-black" href="#">閒聊</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-black" href="#">心情</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-black" href="#">美妝</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-black" href="#">工作</a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 中间内容卡片 -->
+        <div class="col-md-8 offset-md-1">
+          <div class="d-flex flex-column align-items-center mt-5">
+            <div class="card text-center mt-3" style="width: 100%">
+              <div class="card-header">Featured</div>
+              <div class="card-body">
+                <h5 class="card-title">Special title treatment</h5>
+                <p class="card-text">
+                  With supporting text below as a natural lead-in to additional
+                  content.
+                </p>
+                <a href="#" class="btn btn-primary">Go somewhere</a>
+              </div>
+              <div class="card-footer text-muted">2 days ago</div>
+            </div>
+
+            <div class="card text-center mb-3" style="width: 100%">
+              <div class="card-header">Featured</div>
+              <div class="card-body">
+                <h5 class="card-title">Special title treatment</h5>
+                <p class="card-text">
+                  With supporting text below as a natural lead-in to additional
+                  content.
+                </p>
+                <a href="#" class="btn btn-primary">Go somewhere</a>
+              </div>
+              <div class="card-footer text-muted">2 days ago</div>
+            </div>
+
+            <div class="card text-center mb-3" style="width: 100%">
+              <div class="card-header">Featured</div>
+              <div class="card-body">
+                <h5 class="card-title">Special title treatment</h5>
+                <p class="card-text">
+                  With supporting text below as a natural lead-in to additional
+                  content.
+                </p>
+                <a href="#" class="btn btn-primary">Go somewhere</a>
+              </div>
+              <div class="card-footer text-muted">2 days ago</div>
+            </div>
+
+            <div class="card text-center mb-3" style="width: 100%">
+              <div class="card-header">Featured</div>
+              <div class="card-body">
+                <h5 class="card-title">Special title treatment</h5>
+                <p class="card-text">
+                  With supporting text below as a natural lead-in to additional
+                  content.
+                </p>
+                <a href="#" class="btn btn-primary">Go somewhere</a>
+              </div>
+              <div class="card-footer text-muted">2 days ago</div>
+            </div>
+
+            <div class="card text-center mb-3" style="width: 100%">
+              <div class="card-header">Featured</div>
+              <div class="card-body">
+                <h5 class="card-title">Special title treatment</h5>
+                <p class="card-text">
+                  With supporting text below as a natural lead-in to additional
+                  content.
+                </p>
+                <a href="#" class="btn btn-primary">Go somewhere</a>
+              </div>
+              <div class="card-footer text-muted">2 days ago</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      window.onload = function () {
+        //引入navbar
+        fetch("/home/navbar")
+          .then((response) => response.text())
+          .then((data) => {
+            document.getElementById("navbar").innerHTML = data;
+            checkLoginStatus();
+          })
+          .catch((error) => console.log("Error loading navbar:", error));
+
+        function checkLoginStatus() {
+          let isLoggedIn = false;
+          setTimeout(() => {
+            let token = localStorage.getItem("token");
+            console.log(token);
+
+            if (token != null) {
+              // 已登入
+              isLoggedIn = true;
+            } else {
+              // 未登入
+              isLoggedIn = false;
+            }
+
+            updateNavLinks(isLoggedIn);
+          }, 100);
+        }
+
+        function updateNavLinks(isLoggedIn) {
+          const loginLink = document.getElementById("loginLink");
+          const signupLink = document.getElementById("signupLink");
+          console.log("Jasontest change NavLinks");
+          if (isLoggedIn) {
+            console.log("Jasontest1 change NavLinks");
+
+            signupLink.style.display = "none";
+            loginLink.innerText = "Logout";
+            // loginLink= "/home/index";
+            loginLink.addEventListener("click", logoutUser);
+          } else {
+            // 未登錄狀態
+            console.log("Jasontest2 change NavLinks");
+
+            signupLink.style.display = "block";
+            loginLink.innerText = "Login";
+            loginLink.href = "/home/login";
+          }
+        }
+
+        function logoutUser() {
+          localStorage.removeItem("token");
+
+          fetch("/user/logout", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              console.log("Logout successful:", data);
+              window.location.href = "/home/index";
+            })
+            .catch((error) => {
+              console.log("Error during logout:", error);
+            });
+        }
+      };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

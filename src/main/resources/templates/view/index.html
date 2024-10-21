@@ -10,7 +10,6 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
-
   </head>
   <body>
     <div id="navbar"></div>
@@ -144,33 +143,33 @@
     <script>
       window.onload = function () {
         // 引入navbar
-        $(document).ready(function () {
-          $("#navbar").load("/navbar.html", function(){
-            updateNavLinks();
+        fetch("/home/navbar")
+          .then((response) => response.text())
+          .then((data) => {
+            document.getElementById("navbar").innerHTML = data;
+            checkLoginStatus();
+          })
+          .catch((error) => console.log("Error loading navbar:", error));
 
-          });
-        });
+        function checkLoginStatus() {
+          let isLoggedIn = false;
+          setTimeout(() => {
+            let token = localStorage.getItem("token");
+            console.log(token);
 
-        console.log("Jasontest");
+            if (token != null) {
+              // 已登入
+              isLoggedIn = true;
+            } else {
+              // 未登入
+              isLoggedIn = false;
+            }
 
-        let isLoggedIn = false;
+            updateNavLinks(isLoggedIn);
+          }, 100);
+        }
 
-        setTimeout(() => {
-          let token = localStorage.getItem("token");
-          console.log(token);
-
-          if (token != null) {
-            // 已登入
-            isLoggedIn = true;
-          } else {
-            // 未登入
-            isLoggedIn = false;
-          }
-
-          // updateNavLinks();
-        }, 100);
-
-        function updateNavLinks() {
+        function updateNavLinks(isLoggedIn) {
           const loginLink = document.getElementById("loginLink");
           const signupLink = document.getElementById("signupLink");
           console.log("Jasontest change NavLinks");
@@ -212,6 +211,5 @@
       };
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-
   </body>
 </html>
