@@ -57,5 +57,13 @@ public class HomeController {
 		log.info("return buyUsedCar ");
 		return "view/buyCarArea/buyUsedCar";
 	}
+	
+	
+	// 新增文章頁面
+	@GetMapping("/createArticle")
+	public String createArticle() {
+		log.info("return postNewCarArticle");
+		return "view/buyCarArea/postNewCarArticle";
+	}
 
 }

@@ -25,6 +25,8 @@
     </style>
   </head>
   <body>
+    <div id="navbar"></div>
+
     <!-- 文章表單 -->
     <div class="container form-container">
       <div class="row justify-content-center">
@@ -34,7 +36,9 @@
           <!-- 文章分類選擇 -->
           <form id="articleForm">
             <div class="mb-4">
-              <label for="articleCategory" class="form-label"><b>文章分類</b> </label>
+              <label for="articleCategory" class="form-label"
+                ><b>文章分類</b>
+              </label>
               <select class="form-select form-control-lg" id="articleCategory">
                 <option selected disabled>選擇分類</option>
                 <option value="benz">Benz Area</option>
@@ -47,7 +51,9 @@
 
             <!-- 文章標題 -->
             <div class="mb-4">
-              <label for="articleTitle" class="form-label"><b>文章標題</b></label>
+              <label for="articleTitle" class="form-label"
+                ><b>文章標題</b></label
+              >
               <input
                 type="text"
                 class="form-control form-control-lg"
@@ -58,7 +64,9 @@
 
             <!-- 文章內容 -->
             <div class="mb-4">
-              <label for="articleContent" class="form-label"><b>文章內容</b></label>
+              <label for="articleContent" class="form-label"
+                ><b>文章內容</b></label
+              >
               <textarea
                 class="form-control form-control-lg"
                 id="articleContent"
@@ -69,7 +77,9 @@
 
             <!-- 圖片上傳 -->
             <div class="mb-4">
-              <label for="uploadImages" class="form-label"><b>上傳圖片</b></label>
+              <label for="uploadImages" class="form-label"
+                ><b>上傳圖片</b></label
+              >
               <input
                 type="file"
                 class="form-control form-control-lg"
@@ -90,14 +100,86 @@
     </div>
 
     <script>
+      // import navbar
+      window.onload = function () {
+        //引入navbar
+        fetch("/home/navbar")
+          .then((response) => response.text())
+          .then((data) => {
+            document.getElementById("navbar").innerHTML = data;
+            checkLoginStatus();
+          })
+          .catch((error) => console.log("Error loading navbar:", error));
+
+        function checkLoginStatus() {
+          let isLoggedIn = false;
+          setTimeout(() => {
+            let token = localStorage.getItem("token");
+            console.log(token);
+
+            if (token != null) {
+              // 已登入
+              isLoggedIn = true;
+            } else {
+              // 未登入
+              isLoggedIn = false;
+            }
+
+            updateNavLinks(isLoggedIn);
+          }, 100);
+        }
+
+        function updateNavLinks(isLoggedIn) {
+          const loginLink = document.getElementById("loginLink");
+          const signupLink = document.getElementById("signupLink");
+          console.log("Jasontest change NavLinks");
+          if (isLoggedIn) {
+            console.log("Jasontest1 change NavLinks");
+
+            signupLink.style.display = "none";
+            loginLink.innerText = "Logout";
+            // loginLink= "/home/index";
+            loginLink.addEventListener("click", logoutUser);
+          } else {
+            // 未登錄狀態
+            console.log("Jasontest2 change NavLinks");
+
+            signupLink.style.display = "block";
+            loginLink.innerText = "Login";
+            loginLink.href = "/home/login";
+          }
+        }
+
+        function logoutUser() {
+          localStorage.removeItem("token");
+
+          fetch("/user/logout", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              console.log("Logout successful:", data);
+              window.location.href = "/home/index";
+            })
+            .catch((error) => {
+              console.log("Error during logout:", error);
+            });
+        }
+
+        displayArticles();
+      };
+
       // 選取圖片上傳的 input 和預覽區域
-      const uploadImages = document.getElementById('uploadImages');
-      const imagePreview = document.getElementById('imagePreview');
+      const uploadImages = document.getElementById("uploadImages");
+      const imagePreview = document.getElementById("imagePreview");
 
       // 當圖片選擇改變時，觸發事件
-      uploadImages.addEventListener('change', function () {
+      uploadImages.addEventListener("change", function () {
         // 清空之前的預覽圖片
-        imagePreview.innerHTML = '';
+        imagePreview.innerHTML = "";
 
         // 獲取選擇的圖片檔案
         const files = uploadImages.files;
@@ -108,7 +190,7 @@
 
           // 當檔案讀取完成時，創建一個 img 元素並添加到預覽區域
           reader.onload = function (e) {
-            const imgElement = document.createElement('img');
+            const imgElement = document.createElement("img");
             imgElement.src = e.target.result;
             imagePreview.appendChild(imgElement);
           };
@@ -118,56 +200,85 @@
         });
       });
 
-      articleForm.addEventListener('submit', function(event){
+      articleForm.addEventListener("submit", function (event) {
         event.preventDefault();
 
-        const articleCategory = document.getElementById('articleCategory');
-        const title = document.getElementById('articleTitle');
-        const content = document.getElementById('articleContent');
-        const pictures = document.getElementById('uploadImages');
-        
-        const formData = new formData();
-        formdata.append('category' , articleCategory);
-        formData.append('title', title);
-        formData.append('content', content);
+        const articleCategory = document.getElementById("articleCategory");
+        const title = document.getElementById("articleTitle");
+        const content = document.getElementById("articleContent");
+        const pictures = document.getElementById("uploadImages");
 
-        Array.from(pictures).forEach(file => {
-            formData.append(image, file)
+        const formData = new FormData();
+        formData.append("category", articleCategory.value);
+        formData.append("title", title.value);
+        formData.append("content", content.value);
+
+        console.log("category:" + articleCategory.value);
+        console.log("title:" + title.value);
+        console.log("content:" + content.value);
+
+        console.log("token:" + localStorage.getItem("token"));
+
+        Array.from(uploadImages.files).forEach((file) => {
+          console.log("imageList:" + file);
+
+          formData.append("imageList", file);
         });
 
         // fetch API 發送Ajax請求
-        fetch('api/articles', {
-            method: 'POST',
-            body: formData,
+        fetch("/article/create", {
+          method: "POST",
+          body: formData,
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+            // Authorization: "Bearer " + null,
+          },
         })
-        .then(response => {
-            if(!response.ok){
-                throw new Error('Network response was not ok');
+          .then((response) => {
+            // 如果不是JSON，则直接抛出错误
+            const contentType = response.headers.get("content-type");
+
+            if (!contentType || !contentType.includes("application/json")) {
+              throw new Error("Invalid response format");
+            }
+
+            if (!response.ok) {
+              return response.json().then((error) => {
+                // 根據不同errorCode顯示彈窗
+                if (response.status === 401) {
+                  console.log("test1 errorMsg:" + error.message);
+                  console.log("test1-1 errorMsg:", error.message);
+
+                  if (error.message === "登入逾時，請重新登入") {
+                    console.log("test2");
+                    alert("登入超時，請重新登入");
+                  } else if (error.message === "無效的JWT，請重新登入") {
+                    alert("無效的登入狀態，請重新登入");
+                    console.log("test3");
+                  }
+                  console.log("test4");
+
+                  // clear token
+                  localStorage.removeItem("token");
+                  window.location.href = "/home/login";
+                }
+                throw new Error("Network response was not ok");
+              });
             }
             return response.json();
-        })
-        .then(data => {
-            console.log('成功:', data);
+          })
+          .then((data) => {
+            alert("新增文章完成!^^");
+            console.log("成功:", data);
             articleForm.reset();
-            imagePreview.innerHTML = '';
-        })
-        .catch((error) => {
-            console.log('錯誤', error);
-
-        });
-      });      
-
-        
-      
-
-        
-        
-        
-
-
-    
-
-      
+            imagePreview.innerHTML = "";
+            window.location.href = "/home/buyNewCar";
+          })
+          .catch((error) => {
+            alert("新增文章失敗!QQ");
+            console.log("錯誤", error);
+          });
+      });
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>

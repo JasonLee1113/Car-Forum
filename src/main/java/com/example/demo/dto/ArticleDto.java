@@ -1,26 +1,17 @@
-package com.example.demo.model;
+package com.example.demo.dto;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
-import jakarta.persistence.Table;
 
-
-@Entity
-@Table(name = "Article")
-public class Article {
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
+public class ArticleDto {
 	
 	@JsonProperty("category")
 	private String articleCategory;
@@ -34,15 +25,7 @@ public class Article {
 	@Lob
 	@ElementCollection
 	@JsonProperty("imageList")
-	private List<byte[]> imageList = new ArrayList<>();
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
+	private List<MultipartFile> imageList = new ArrayList<>();
 
 	public String getArticleCategory() {
 		return articleCategory;
@@ -68,17 +51,13 @@ public class Article {
 		this.articleContent = articleContent;
 	}
 
-	public List<byte[]> getImageList() {
+	public List<MultipartFile> getImageList() {
 		return imageList;
 	}
 
-	public void setImageList(List<byte[]> imageList) {
+	public void setImageList(List<MultipartFile> imageList) {
 		this.imageList = imageList;
 	}
-	
-	
-	
-	
 	
 	
 }

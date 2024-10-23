@@ -69,7 +69,7 @@
             </li>
           </ul>
 
-          <a href="xxx.html" class="btn btn-outline-primary insert-post-btn"
+          <a href="/home/createArticle" class="btn btn-outline-primary insert-post-btn"
             ><i class="fa-solid fa-rocket"></i> <strong>新增文章</strong></a
           >
         </div>
@@ -77,29 +77,7 @@
         <!-- 中間内容 -->
         <div class="col-md-8 offset-md-1">
           <div class="d-flex flex-column align-items-center mt-5">
-            文章表單
-            <form id="articleForm" class="mb-4">
-              <div class="mb-3">
-                <label for="articleTitle" class="form-label">文章標題</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="articleTitle"
-                  placeholder="輸入文章標題"
-                />
-              </div>
-              <div class="mb-3">
-                <label for="articleContent" class="form-label">文章內容</label>
-                <textarea
-                  class="form-control"
-                  id="articleContent"
-                  rows="3"
-                  placeholder="輸入文章內容"
-                ></textarea>
-              </div>
-              <button type="submit" class="btn btn-primary">提交文章</button>
-            </form>
-
+          
             <!-- 文章卡片 -->
             <div id="articleList" class="w-100"></div>
           </div>
@@ -176,23 +154,53 @@
             });
         }
 
-        displayArticles();
+        // displayArticles();
+
+
 
       };
 
-      // // 使用 Fetch API 与后端交互
+      // 查詢全部文章
+      fetch("/article/getArticle", {
+        method: "GET",
+      })
+      .then((response) => {
+        console.log('response:' + response);
+
+        if(!response.ok) {
+          return response.json().then((error) => {
+            throw new Error('Network response was not ok');
+          });
+        }
+
+        return response.json();
+      })
+      .then((data) => {
+        displayArticles(data);
+        alert('文章已查找完畢');
+        console.log('成功', data);
+      })
+      .catch((error) => {
+        alert('文章查找失敗');
+        console.log('錯誤', error);
+      });
+
+
+
+
+
 
       // 模擬後端的文章資料庫
-      let articles = [
-        { id: 1, title: "文章 1", content: "這是文章 1 的內容" },
-        { id: 2, title: "文章 2", content: "這是文章 2 的內容" },
-      ];
-
+      // let articles = [
+      //   { id: 1, title: "文章 1", content: "這是文章 1 的內容" },
+      //   { id: 2, title: "文章 2", content: "這是文章 2 的內容" },
+      // ];
+      
       // 顯示文章列表
-      function displayArticles() {
+      function displayArticles(articleList) {
         const articleList = document.getElementById("articleList");
         articleList.innerHTML = "";
-        articles.forEach((article) => {
+        articleList.forEach((article) => {
           articleList.innerHTML += `
             <div class="card text-center mb-3" style="width: 100%">
               <div class="card-header">${article.title}</div>
