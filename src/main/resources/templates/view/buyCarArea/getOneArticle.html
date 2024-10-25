@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>單筆文章詳情</title>
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* 基本页面布局 */
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f3f3f3;
+      }
+
+      /* 容器设置 */
+      .container {
+        display: flex;
+        margin: 0;
+        padding: 0;
+      }
+
+      /* 侧边栏样式 */
+      .sidebar {
+        background-color: #0c578a;
+        width: 250px;
+        height: 100vh;
+        padding: 15px;
+        color: white;
+      }
+
+      .sidebar h2 {
+        font-size: 20px;
+        margin-bottom: 20px;
+      }
+
+      .sidebar ul {
+        list-style-type: none;
+        padding: 0;
+      }
+
+      .sidebar ul li {
+        margin: 15px 0;
+      }
+
+      .sidebar ul li a {
+        color: white;
+        text-decoration: none;
+        font-size: 18px;
+      }
+
+      .sidebar ul li a:hover {
+        text-decoration: underline;
+      }
+
+      /* 主内容区样式 */
+      .content {
+        flex-grow: 1;
+        padding: 20px;
+        background-color: white;
+        margin-left: 0;
+      }
+
+      .content h1 {
+        color: #333;
+      }
+
+      .content p {
+        line-height: 1.6;
+        color: #666;
+      }
+
+      /* 图片样式 */
+      #oneImage {
+        height: 200px;
+        width: 200px;
+        object-fit: cover;
+        margin: 5px;
+      }
+
+      /* 留言功能样式 */
+      .comments {
+        margin-top: 30px;
+      }
+
+      .comments h3 {
+        font-size: 22px;
+        margin-bottom: 10px;
+      }
+
+      .comment-box {
+        margin-top: 10px;
+      }
+
+      .comment-box textarea {
+        width: 100%;
+        height: 100px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+      }
+
+      .comment-box button {
+        margin-top: 10px;
+        padding: 10px 15px;
+        background-color: #0c578a;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .comment-box button:hover {
+        background-color: #09466c;
+      }
+
+      .comment-list {
+        margin-top: 20px;
+      }
+
+      .comment-item {
+        padding: 15px;
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        margin-bottom: 10px;
+        border-radius: 5px;
+      }
+
+      .btn-warning {
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container" style="padding: 0">
+      <!-- 侧边栏 -->
+      <div class="sidebar">
+        <h2>All forums</h2>
+        <ul>
+          <li><a href="#">Trending forums</a></li>
+          <li><a href="#">Play Game</a></li>
+          <li><a href="#">創作者排行榜</a></li>
+          <li><a href="#">ACG 專區</a></li>
+        </ul>
+      </div>
+
+      <!-- 主内容区 -->
+      <div class="content">
+        <div class="d-flex justify-content-between align-items-center">
+          <h1 id="articleTitle">文章標題</h1>
+          <button class="btn btn-warning" id="editButton">編輯</button>
+        </div>
+        <p id="articleContent">文章內容</p>
+        <div class="image-preview" id="articleImage"></div>
+
+        <!-- 編輯文章表單-->
+        <div class="edit-form" id="editForm">
+          <h3>編輯文章</h3>
+          <input
+            type="text"
+            id="editTitle"
+            class="form-control"
+            placeholder="文章標題"
+          />
+          <textarea
+            id="editContent"
+            class="form-control"
+            row="3"
+            placeholder="文章內容"
+          ></textarea>
+          <input
+            type="file"
+            id="editImage"
+            class="form-control"
+            accept="image/*"
+          />
+          <button class="btn btn-success" id="saveButton">保存</button>
+          <button class="btn btn-outline-secondary" id="cancelButton">
+            取消
+          </button>
+        </div>
+
+        <!-- 留言功能 -->
+        <div class="comments">
+          <h3>Comments</h3>
+          <div class="comment-box">
+            <textarea placeholder="Leave a comment..."></textarea>
+            <button type="button">Post Comment</button>
+          </div>
+          <div class="comment-list">
+            <div class="comment-item">
+              <p><strong>User1:</strong> This is a great article!</p>
+            </div>
+            <div class="comment-item">
+              <p><strong>User2:</strong> Thanks for sharing this!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // 取得URL中的articleID parameter
+      const urlParams = new URLSearchParams(window.location.search);
+      const articleId = urlParams.get("articleId");
+
+      // 取得文章詳情
+      fetch(`/article/getOneArticle?articleId=${articleId}`, {
+        method: "GET",
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("單篇文章API response:", data);
+          document.getElementById("articleTitle").innerText =
+            data.title || "無標題";
+          document.getElementById("articleContent").innerText =
+            data.content || "無內容";
+
+          const articleImage = document.getElementById("articleImage");
+          articleImage.innerHTML = "";
+
+          if (data.base64ImageList && data.base64ImageList.length > 0) {
+            data.base64ImageList.forEach((element) => {
+              articleImage.innerHTML += `
+                    <img src="data:image/jpeg;base64,${element}" alt="文章圖片" id="oneImage"/>`;
+            });
+          }
+        })
+        .catch((error) => console.log("Error loading article:", error));
+
+      // Edit Article
+      const editButton = document.getElementById("editButton");
+      const editForm = document.getElementById("editForm");
+      const saveButton = document.getElementById("saveButton");
+      const cancelButton = document.getElementById("cancelButton");
+      const editTitle = document.getElementById("editTitle");
+      const editContent = document.getElementById("editContent");
+      const editImage = document.getElementById("editImage");
+
+      editButton.addEventListener("click", () => {
+        editTitle.value = document.getElementById("articleTitle").innerText;
+        editContent.value = document.getElementById("articleContent").innerText;
+        editForm.style.display = "block";
+      });
+
+      cancelButton.addEventListener("click", () => {
+        editForm.style.display = "none";
+      });
+
+      saveButton.addEventListener("click", () => {
+        const updatedTitle = editTitle.value;
+        const updatedContent = editContent.value;
+        const updatedImageFile = editImage.files[0];
+
+        const formData = new FormData();
+        formData.append("articleId", articleId);
+        formData.append("title", updatedTitle);
+        formData.append("content", updatedContent);
+
+        if (updatedImageFile) {
+          formData.append("image", updatedImageFile);
+        }
+
+        // 假设更新文章的API为POST请求
+        fetch("/article/updateArticle", {
+          method: "PUT",
+          body: formData,
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log("更新文章API响应:", data);
+            if (data.success) {
+              // 更新成功，刷新页面或重新获取文章详情
+              location.reload(); // 重新加载页面
+            } else {
+              alert("更新失败！");
+            }
+          })
+          .catch((error) => console.log("更新文章错误:", error));
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

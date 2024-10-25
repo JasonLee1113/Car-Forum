@@ -26,6 +26,9 @@ public class ArticleDto {
 	@ElementCollection
 	@JsonProperty("imageList")
 	private List<MultipartFile> imageList = new ArrayList<>();
+	
+	@JsonProperty("base64ImageList")
+	private List<String> base64ImageList = new ArrayList<>();
 
 	public String getArticleCategory() {
 		return articleCategory;
@@ -58,6 +61,13 @@ public class ArticleDto {
 	public void setImageList(List<MultipartFile> imageList) {
 		this.imageList = imageList;
 	}
-	
+
+	public List<String> getBase64ImageList() {
+		return base64ImageList;
+	}
+
+	public void setBase64ImageList(List<String> base64ImageList) {
+		this.base64ImageList = base64ImageList;
+	}
 	
 }

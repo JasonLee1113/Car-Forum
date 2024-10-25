@@ -65,5 +65,12 @@ public class HomeController {
 		log.info("return postNewCarArticle");
 		return "view/buyCarArea/postNewCarArticle";
 	}
+	
+	// 單筆詳細文章
+	@GetMapping("/getOneArticle")
+	public String getOneArticle() {
+		log.info("return getOneArticle");
+		return "view/buyCarArea/getOneArticle";
+	}
 
 }

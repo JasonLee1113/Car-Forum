@@ -12,7 +12,10 @@
     />
 
     <!-- font awesome -->
-    <script src="https://kit.fontawesome.com/73966c1c8b.js" crossorigin="anonymous"></script>
+    <script
+      src="https://kit.fontawesome.com/73966c1c8b.js"
+      crossorigin="anonymous"
+    ></script>
 
     <style>
       .sidebar {
@@ -51,25 +54,36 @@
           <h4>分類</h4>
           <ul class="nav flex-column">
             <li class="nav-item">
-              <a href="your-target-page.html" class="btn btn-outline-primary"><i class="fa-solid fa-car"></i>
+              <a href="your-target-page.html" class="btn btn-outline-primary"
+                ><i class="fa-solid fa-car"></i>
                 即時熱門看板
               </a>
             </li>
             <li class="nav-item">
-              <a href="xxx.html" class="btn btn-outline-primary"><i class="fa-solid fa-car"></i> Benz Area </a>
+              <a href="xxx.html" class="btn btn-outline-primary"
+                ><i class="fa-solid fa-car"></i> Benz Area
+              </a>
             </li>
             <li class="nav-item">
-              <a href="xxx.html" class="btn btn-outline-primary"><i class="fa-solid fa-car"></i> BMW Area</a>
+              <a href="xxx.html" class="btn btn-outline-primary"
+                ><i class="fa-solid fa-car"></i> BMW Area</a
+              >
             </li>
             <li class="nav-item">
-              <a href="xxx.html" class="btn btn-outline-primary"><i class="fa-solid fa-car"></i> Subaru Area</a>
+              <a href="xxx.html" class="btn btn-outline-primary"
+                ><i class="fa-solid fa-car"></i> Subaru Area</a
+              >
             </li>
             <li class="nav-item">
-              <a href="xxx.html" class="btn btn-outline-primary"><i class="fa-solid fa-car"></i> Toyota Area</a>
+              <a href="xxx.html" class="btn btn-outline-primary"
+                ><i class="fa-solid fa-car"></i> Toyota Area</a
+              >
             </li>
           </ul>
 
-          <a href="/home/createArticle" class="btn btn-outline-primary insert-post-btn"
+          <a
+            href="/home/createArticle"
+            class="btn btn-outline-primary insert-post-btn"
             ><i class="fa-solid fa-rocket"></i> <strong>新增文章</strong></a
           >
         </div>
@@ -77,7 +91,6 @@
         <!-- 中間内容 -->
         <div class="col-md-8 offset-md-1">
           <div class="d-flex flex-column align-items-center mt-5">
-          
             <!-- 文章卡片 -->
             <div id="articleList" class="w-100"></div>
           </div>
@@ -155,59 +168,51 @@
         }
 
         // displayArticles();
-
-
-
+        getAllArticle();
       };
 
-      // 查詢全部文章
-      fetch("/article/getArticle", {
-        method: "GET",
-      })
-      .then((response) => {
-        console.log('response:' + response);
+      function getAllArticle() {
+        // 查詢全部文章
+        fetch("/article/getArticle", {
+          method: "GET",
+        })
+          .then((response) => {
+            console.log("response:" + response);
 
-        if(!response.ok) {
-          return response.json().then((error) => {
-            throw new Error('Network response was not ok');
+            if (!response.ok) {
+              return response.json().then((error) => {
+                throw new Error("Network response was not ok");
+              });
+            }
+
+            return response.json();
+          })
+          .then((data) => {
+            displayArticles(data);
+            console.log("成功", data);
+          })
+          .catch((error) => {
+            alert("文章查找失敗");
+            console.log("錯誤", error);
           });
-        }
-
-        return response.json();
-      })
-      .then((data) => {
-        displayArticles(data);
-        alert('文章已查找完畢');
-        console.log('成功', data);
-      })
-      .catch((error) => {
-        alert('文章查找失敗');
-        console.log('錯誤', error);
-      });
-
-
-
-
-
-
-      // 模擬後端的文章資料庫
-      // let articles = [
-      //   { id: 1, title: "文章 1", content: "這是文章 1 的內容" },
-      //   { id: 2, title: "文章 2", content: "這是文章 2 的內容" },
-      // ];
-      
+      }
+ 
       // 顯示文章列表
-      function displayArticles(articleList) {
+      function displayArticles(articles) {
         const articleList = document.getElementById("articleList");
         articleList.innerHTML = "";
-        articleList.forEach((article) => {
+        articles.forEach((article) => {
           articleList.innerHTML += `
-            <div class="card text-center mb-3" style="width: 100%">
-              <div class="card-header">${article.title}</div>
+            <div class="card text-center mb-3" style="width: 100%;">
+              <a href = "/home/getOneArticle?articleId=${article.id}"> 
+                <div class="card-header">${article.title}</div> 
+                </a>
               <div class="card-body">
                 <p class="card-text">${article.content}</p>
-                <button class="btn btn-warning" onclick="editArticle(${article.id})">編輯</button>
-                <button class="btn btn-danger" onclick="deleteArticle(${article.id})">刪除</button>
+                <a href= "/home/getOneArticle?articleId=${article.id}">                
+                <button class="btn btn-warning" onclick="editArticle(${article.id});">編輯</button>
+                </a>
+                <button class="btn btn-danger" onclick="deleteArticle(${article.id});">刪除</button>
               </div>
             </div>
           `;
@@ -245,9 +250,7 @@
         });
 
       // 編輯文章
-      let editingId = null;
       function editArticle(id) {
-        const article = articles.find((article) => article.id === id);
         document.getElementById("articleTitle").value = article.title;
         document.getElementById("articleContent").value = article.content;
         editingId = id;
@@ -255,12 +258,31 @@
 
       // 刪除文章
       function deleteArticle(id) {
-        articles = articles.filter((article) => article.id !== id);
-        displayArticles();
+        fetch(`/article/deleteArticle?articleId=${id}`, {
+          method: "DELETE",
+        })
+          .then((response) => {
+            console.log("response:" + response);
+
+            if (!response.ok) {
+              return response.json().then((error) => {
+                throw new Error("Network response was not ok");
+              });
+            }
+            return response.json();
+          })
+          .then((data) => {
+            alert("文章刪除成功")
+            console.log("成功", data);
+            getAllArticle();  // 重新取得所有文章
+          })
+          .catch((error) => {
+            alert("文章刪除失敗");
+            console.log("錯誤", error);
+          });
       }
 
-      // 初次加載時顯示文章
-      // window.onload = displayArticles;
+      
 
 
     </script>
