@@ -93,7 +93,7 @@ public class SecurityConfig {
 				.sessionManagement(
 						(sessionManagement) -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(authz -> authz
-						.requestMatchers("/home/**", "/login.html", "/signup.html", "/navbar.html", "/getOneArticle.html").permitAll()
+						.requestMatchers("/home/**", "/login.html", "/signup.html", "/navbar.html", "/getOneArticle.html", "/articleCategory.html").permitAll()
 						.requestMatchers("/user/**", "/article/**").permitAll()
 						.requestMatchers("/article/create").authenticated()
 

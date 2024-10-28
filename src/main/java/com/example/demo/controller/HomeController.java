@@ -72,5 +72,12 @@ public class HomeController {
 		log.info("return getOneArticle");
 		return "view/buyCarArea/getOneArticle";
 	}
+	
+	// 文章種類-Benz Area
+	@GetMapping("/articleCategory")
+	public String articleCategory() {
+		log.info("return articleCategory");
+		return "view/buyCarArea/articleCategory";
+	}
 
 }

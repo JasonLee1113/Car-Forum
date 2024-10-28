@@ -165,32 +165,62 @@ public class ArticleController {
 	 * 更新文章
 	 */
 	@PutMapping("/updateArticle")
-	public ResponseEntity<?> updateArticle(@RequestParam("category") String articleCategory,
-			@RequestParam("title") String articleTitle, @RequestParam("content") String articleContent,
+	public ResponseEntity<?> updateArticle(@RequestParam("articleId") long id, @RequestParam("category") String articleCategory,
+			@RequestParam("title") String articleTitle, @RequestParam("content") String articleContent, 
 			@RequestParam("imageList") MultipartFile[] imageList) {
 
 		try {
-			log.info("createArticle");
+			log.info("createArticle id:" + id);
 			log.info("article category:" + articleCategory);
 			log.info("article title:" + articleTitle);
 			log.info("article content:" + articleContent);
 
 			Article article = new Article();
+			article.setId(id);
 			article.setArticleCategory(articleCategory);
 			article.setArticleTitle(articleTitle);
 			article.setArticleContent(articleContent);
 
+			log.info("test1");
 			for (MultipartFile image : imageList) {
 				log.info("article image:" + image.getBytes());
 				article.getImageList().add(image.getBytes());
 			}
+			
+			log.info("test2");
 
 			service.createArticle(article);
-			ApiResponse response = new ApiResponse(true, "新增文章成功!", null);
+			log.info("test5");
+
+			ApiResponse response = new ApiResponse(true, "編輯文章成功!", null);
+			log.info("test6");
+
 			return ResponseEntity.ok(response);
 		} catch (Exception e) {
 			log.error("例外訊息:" + e.toString());
-			ApiResponse response = new ApiResponse(false, "testErrorMsg", null);
+			ApiResponse response = new ApiResponse(false, "編輯文章失敗", null);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).contentType(MediaType.APPLICATION_JSON)
+					.body(response);
+		}
+	}
+	
+	/**
+	 * 取得分類後的文章
+	 */
+	@GetMapping("/getCategoriedArticle")
+	public ResponseEntity<?> getCategoriedArticle(@RequestParam("category") String articleCategory) {
+		try {
+			log.info("取得分類後文章 category:" + articleCategory);
+			List<Article> articleList = service.getCategoriedArticle(articleCategory);
+			
+			log.info("查找文章 count:" + articleList.size());
+			log.info("查找文章 content:" + articleList.get(0).getArticleContent());
+			
+			return ResponseEntity.ok(articleList);
+			
+		}catch(Exception e) {
+			log.error("例外訊息:" + e.toString());
+			ApiResponse response = new ApiResponse(false, "取得分類後文章失敗", null);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).contentType(MediaType.APPLICATION_JSON)
 					.body(response);
 		}

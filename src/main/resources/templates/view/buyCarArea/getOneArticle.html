@@ -24,6 +24,7 @@
       .container {
         display: flex;
         margin: 0;
+        margin-left: 0 !important;  /*強制覆蓋bootstrap css*/
         padding: 0;
       }
 
@@ -133,12 +134,27 @@
         border-radius: 5px;
       }
 
-      .btn-warning {
+      .image-preview {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 10px;
       }
+
+      .image-preview img {
+        max-width: 150px;
+        max-height: 150px;
+        object-fit: cover;
+      }
+
+
     </style>
   </head>
 
   <body>
+    <!--navbar-->
+    <div id="navbar"></div>
+
     <div class="container" style="padding: 0">
       <!-- 侧边栏 -->
       <div class="sidebar">
@@ -163,6 +179,14 @@
         <!-- 編輯文章表單-->
         <div class="edit-form" id="editForm">
           <h3>編輯文章</h3>
+          <select class="form-select form-control-lg" id="articleCategory">
+            <option value="benz">Benz Area</option>
+            <option value="bmw">Bmw Area</option>
+            <option value="toyota">Toyota Area</option>
+            <option value="subaru">Subaru Area</option>
+            <option value="honda">Honda Area</option>
+          </select>
+
           <input
             type="text"
             id="editTitle"
@@ -180,7 +204,11 @@
             id="editImage"
             class="form-control"
             accept="image/*"
+            multiple
           />
+          <div class="image-preview" id="imagePreview"></div>
+
+          <!-- class="form-control"-->
           <button class="btn btn-success" id="saveButton">保存</button>
           <button class="btn btn-outline-secondary" id="cancelButton">
             取消
@@ -207,6 +235,76 @@
     </div>
 
     <script>
+      // import navbar
+      window.onload = function () {
+        //引入navbar
+        fetch("/home/navbar")
+          .then((response) => response.text())
+          .then((data) => {
+            document.getElementById("navbar").innerHTML = data;
+            checkLoginStatus();
+          })
+          .catch((error) => console.log("Error loading navbar:", error));
+
+        function checkLoginStatus() {
+          let isLoggedIn = false;
+          setTimeout(() => {
+            let token = localStorage.getItem("token");
+            console.log(token);
+
+            if (token != null) {
+              // 已登入
+              isLoggedIn = true;
+            } else {
+              // 未登入
+              isLoggedIn = false;
+            }
+
+            updateNavLinks(isLoggedIn);
+          }, 100);
+        }
+
+        function updateNavLinks(isLoggedIn) {
+          const loginLink = document.getElementById("loginLink");
+          const signupLink = document.getElementById("signupLink");
+          console.log("Jasontest change NavLinks");
+          if (isLoggedIn) {
+            console.log("Jasontest1 change NavLinks");
+
+            signupLink.style.display = "none";
+            loginLink.innerText = "Logout";
+            // loginLink= "/home/index";
+            loginLink.addEventListener("click", logoutUser);
+          } else {
+            // 未登錄狀態
+            console.log("Jasontest2 change NavLinks");
+
+            signupLink.style.display = "block";
+            loginLink.innerText = "Login";
+            loginLink.href = "/home/login";
+          }
+        }
+
+        function logoutUser() {
+          localStorage.removeItem("token");
+
+          fetch("/user/logout", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              console.log("Logout successful:", data);
+              window.location.href = "/home/index";
+            })
+            .catch((error) => {
+              console.log("Error during logout:", error);
+            });
+        }
+      };
+
       // 取得URL中的articleID parameter
       const urlParams = new URLSearchParams(window.location.search);
       const articleId = urlParams.get("articleId");
@@ -222,6 +320,8 @@
             data.title || "無標題";
           document.getElementById("articleContent").innerText =
             data.content || "無內容";
+          document.getElementById("articleCategory").value =
+            data.articleCategory || "benz";
 
           const articleImage = document.getElementById("articleImage");
           articleImage.innerHTML = "";
@@ -254,31 +354,68 @@
         editForm.style.display = "none";
       });
 
+      const uploadImages = document.getElementById('editImage');
+      const imagePreview = document.getElementById('imagePreview');
+
+      // 當圖片選擇改變時，觸發事件
+      uploadImages.addEventListener('change', function(){
+        imagePreview.innerHTML = "";
+        const files = uploadImages.files;
+        
+        Array.from(files).forEach((file) => {
+          const reader = new FileReader();
+
+          reader.onload = function(e){
+            const imageElement = document.createElement('img');
+            imageElement.src = e.target.result;
+            imagePreview.appendChild(imageElement);
+          };
+          reader.readAsDataURL(file);
+        });
+      });
+
       saveButton.addEventListener("click", () => {
         const updatedTitle = editTitle.value;
         const updatedContent = editContent.value;
-        const updatedImageFile = editImage.files[0];
-
+        const updatedCategory = articleCategory.value;
+        const updatedImageFile = document.getElementById('editImage');
+             
         const formData = new FormData();
-        formData.append("articleId", articleId);
+        formData.append("category", updatedCategory);
         formData.append("title", updatedTitle);
+        formData.append("articleId", articleId);
         formData.append("content", updatedContent);
 
-        if (updatedImageFile) {
-          formData.append("image", updatedImageFile);
-        }
+        // if (updatedImageFile) {
+        //   formData.append("imageList", updatedImageFile);
+        // }
+
+        Array.from(updatedImageFile.files).forEach((file) => {
+          console.log('update image:' + file);
+          formData.append("imageList", file);
+        });
 
         // 假设更新文章的API为POST请求
         fetch("/article/updateArticle", {
           method: "PUT",
           body: formData,
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
         })
-          .then((response) => response.json())
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            }
+            return response.json();
+          })
           .then((data) => {
             console.log("更新文章API响应:", data);
+
             if (data.success) {
-              // 更新成功，刷新页面或重新获取文章详情
+              console.log("更新文章成功");
               location.reload(); // 重新加载页面
+              alert("更新成功!");
             } else {
               alert("更新失败！");
             }

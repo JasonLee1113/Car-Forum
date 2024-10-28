@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -23,6 +24,7 @@ public class Article {
 	private long id;
 	
 	@JsonProperty("category")
+	@Column(name = "articleCategory")
 	private String articleCategory;
 	
 	@JsonProperty("title")

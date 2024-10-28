@@ -25,7 +25,11 @@ public class ArticleService {
 	 */
 	public void createArticle(Article article) {
 		try {
+			log.info("test3");
+
 			articleRepository.save(article);
+			log.info("test4");
+
 		}catch(Exception e) {
 			log.error("新增文章錯誤 Exception:" + e.toString());
 		}
@@ -86,7 +90,22 @@ public class ArticleService {
 			articleRepository.save(null);
 			
 		}catch(Exception e) {
+			log.error("更新文章錯誤 Exception:" + e.toString());
+		}
+	}
+	
+	/**
+	 * 取得分類後的文章
+	 */
+	public List<Article> getCategoriedArticle(String articleCategory) {
+		
+		try {
+			log.info("service 文章類別:" + articleCategory);
+			return articleRepository.findByArticleCategory(articleCategory);
 			
+		}catch(Exception e) {
+			log.error("取得分類後文章錯誤 Exception:" + e.toString());
+			throw e;
 		}
 	}
 	
